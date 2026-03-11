@@ -1,0 +1,8 @@
+anthropic
+chromadb
+sentence-transformers
+gradio
+python-dotenv
+requests
+feedparser
+PyPDF2
