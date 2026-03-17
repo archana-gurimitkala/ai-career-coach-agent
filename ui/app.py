@@ -16,16 +16,65 @@ POSITION_TYPES = ["Paid Intern", "Junior AI Engineer", "Junior LLM Engineer"]
 ROLES          = ["AI Engineer", "LLM Engineer"]
 
 
+def build_html_table(unique):
+    """Build an HTML table with clickable Apply links."""
+    rows_html = ""
+    for r in unique:
+        salary     = r["salary"]
+        period     = salary.get("period", "annual")
+        gaps       = ", ".join(r["skill_gaps"][:3]) if r["skill_gaps"] else "None"
+        course     = r["courses"][0]["title"] if r["courses"] else "—"
+        why        = r["job"].get("why_good_fit", "—")
+        salary_str = f"${salary['min']:,} – ${salary['max']:,} ({period})"
+        url        = r["job"].get("url", "")
+        apply_btn  = f'<a href="{url}" target="_blank" style="background:#f97316;color:white;padding:6px 12px;border-radius:6px;text-decoration:none;font-weight:bold;">Apply</a>' if url else "—"
+
+        rows_html += f"""
+        <tr style="border-bottom:1px solid #374151">
+            <td style="padding:10px;color:#f9fafb">{r["position_type"]}</td>
+            <td style="padding:10px;color:#f9fafb">{r["target_role"]}</td>
+            <td style="padding:10px;color:#f9fafb;font-weight:bold">{r["job"]["title"]}</td>
+            <td style="padding:10px;color:#f9fafb">{r["job"]["company"]}</td>
+            <td style="padding:10px;color:#f9fafb">{salary_str}</td>
+            <td style="padding:10px;color:#34d399;text-align:center;font-weight:bold">{salary["fit_score"]}/100</td>
+            <td style="padding:10px;color:#d1d5db;font-size:0.85em">{gaps}</td>
+            <td style="padding:10px;color:#d1d5db;font-size:0.85em">{course}</td>
+            <td style="padding:10px;color:#d1d5db;font-size:0.85em">{why}</td>
+            <td style="padding:10px;text-align:center">{apply_btn}</td>
+        </tr>"""
+
+    return f"""
+    <div style="overflow-x:auto;border-radius:10px;overflow:hidden">
+    <table style="width:100%;border-collapse:collapse;font-size:0.9em;background:#111827">
+        <thead>
+            <tr style="background:#1f2937;text-align:left">
+                <th style="padding:12px;color:#9ca3af;font-size:0.8em;text-transform:uppercase">Position</th>
+                <th style="padding:12px;color:#9ca3af;font-size:0.8em;text-transform:uppercase">Role</th>
+                <th style="padding:12px;color:#9ca3af;font-size:0.8em;text-transform:uppercase">Job Title</th>
+                <th style="padding:12px;color:#9ca3af;font-size:0.8em;text-transform:uppercase">Company</th>
+                <th style="padding:12px;color:#9ca3af;font-size:0.8em;text-transform:uppercase">Salary</th>
+                <th style="padding:12px;color:#9ca3af;font-size:0.8em;text-transform:uppercase">Fit Score</th>
+                <th style="padding:12px;color:#9ca3af;font-size:0.8em;text-transform:uppercase">Skill Gaps</th>
+                <th style="padding:12px;color:#9ca3af;font-size:0.8em;text-transform:uppercase">Top Course</th>
+                <th style="padding:12px;color:#9ca3af;font-size:0.8em;text-transform:uppercase">Why Good Fit</th>
+                <th style="padding:12px;color:#9ca3af;font-size:0.8em;text-transform:uppercase">Apply</th>
+            </tr>
+        </thead>
+        <tbody>{rows_html}</tbody>
+    </table>
+    </div>"""
+
+
 def run_coach(resume_file, roles, position_types, custom_role):
     """Main function — runs when user clicks the button."""
 
     # Validate inputs
     if resume_file is None:
-        return [], "⚠️ Please upload your resume PDF."
+        return "", "⚠️ Please upload your resume PDF."
     if not roles:
-        return [], "⚠️ Please select at least one role."
+        return "", "⚠️ Please select at least one role."
     if not position_types:
-        return [], "⚠️ Please select at least one position type."
+        return "", "⚠️ Please select at least one position type."
 
     # Add custom role if typed in
     target_roles = list(roles)
@@ -37,7 +86,7 @@ def run_coach(resume_file, roles, position_types, custom_role):
         print("📄 Reading resume...")
         ingest_resume(resume_file.name)
     except Exception as e:
-        return [], f"❌ Error reading resume: {str(e)}"
+        return "", f"❌ Error reading resume: {str(e)}"
 
     all_results = []
 
@@ -79,43 +128,20 @@ def run_coach(resume_file, roles, position_types, custom_role):
     seen   = set()
     unique = []
     for r in sorted(all_results, key=lambda x: x["salary"]["fit_score"], reverse=True):
-        url = r["job"].get("url", "")
-        if url not in seen:
-            seen.add(url)
+        job_url = r["job"].get("url", "").lower().strip()
+        if job_url not in seen:
+            seen.add(job_url)
             unique.append(r)
 
-    # Step 4: Format into table rows
-    rows = []
-    for r in unique:
-        salary     = r["salary"]
-        period     = salary.get("period", "annual")
-        gaps       = ", ".join(r["skill_gaps"][:3]) if r["skill_gaps"] else "None"
-        course     = r["courses"][0]["title"] if r["courses"] else "—"
-        why        = r["job"].get("why_good_fit", "—")
-        salary_str = f"${salary['min']:,} – ${salary['max']:,} ({period})"
-
-        rows.append([
-            r["position_type"],
-            r["target_role"],
-            r["job"]["title"],
-            r["job"]["company"],
-            salary_str,
-            f"{salary['fit_score']}/100",
-            gaps,
-            course,
-            why,
-        ])
-
-    return rows, f"✅ Done! Found {len(rows)} opportunities."
+    return build_html_table(unique), f"✅ Done! Found {len(unique)} opportunities."
 
 
 # Build the UI
 with gr.Blocks(title="AI Career Coach") as app:
 
     gr.Markdown("""
-# 🤖 AI Career Coach Agent
-### Powered by Claude Sonnet 4.6 + RAG + Multi-Agent System
-**Finds remote startup jobs · Spots skill gaps · Recommends free courses · Estimates salary**
+# AI Career Coach Agent
+Powered by Claude Sonnet 4.6 + RAG + Multi-Agent System
 """)
 
     with gr.Row():
@@ -140,7 +166,7 @@ with gr.Blocks(title="AI Career Coach") as app:
                 label="Add Custom Role (optional)",
                 placeholder="e.g. ML Engineer, Prompt Engineer"
             )
-            btn = gr.Button("🔍 Find Opportunities", variant="primary", size="lg")
+            btn = gr.Button("Find Opportunities", variant="primary", size="lg")
 
         # Right column — status
         with gr.Column(scale=1):
@@ -160,14 +186,7 @@ with gr.Blocks(title="AI Career Coach") as app:
 
     status = gr.Textbox(label="Status", interactive=False)
 
-    table = gr.Dataframe(
-        headers=[
-            "Position", "Role", "Job Title", "Company",
-            "Salary", "Fit Score", "Skill Gaps", "Top Course", "Why Good Fit"
-        ],
-        interactive=False,
-        wrap=True
-    )
+    table = gr.HTML()
 
     # Wire button to function
     btn.click(

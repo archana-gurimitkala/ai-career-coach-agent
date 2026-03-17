@@ -13,15 +13,27 @@ CANDIDATE_CONTEXT = """
 Candidate background:
 - NOT a traditional software engineer — builds using AI tools (Claude, Cursor, ChatGPT)
 - Completed Ed Donner's 8-week LLM Engineering course
-- Built 12+ real projects: RAG pipelines, fine-tuned GPT-4o-mini and DeepSeek 1.3B (LoRA),
-  multi-agent systems, vector stores (ChromaDB), Gradio UIs, Modal deployment,
-  YouTube summarizer, SQL fine-tuning, hotel support chatbot, story generator
+- 12 real projects built and published on GitHub:
+
+  1. AI Career Coach Agent — multi-agent system (6 agents), Claude Sonnet 4.6,
+     RAG pipeline, ChromaDB, parallel search, Gradio UI
+  2. StayEasy RAG — hotel support chatbot, RAG, vector embeddings, OpenAI
+  3. Text-to-SQL Fine-tuning — GPT-4o-mini fine-tuned for natural language to SQL
+  4. DeepSeek SQL Fine-tuning — DeepSeek Coder 1.3B + LoRA for SQL generation
+  5. Groq YouTube Summarizer — fast video summaries using Groq API
+  6. Story Generator — GPT-4o-mini + DALL-E 3 + TTS multi-modal app
+  7. Brochure Generator — website scraper + PDF generator with Gradio
+  8. Ollama Webpage Summarizer — 100% local summarizer using Llama 3.2
+  9. Chatbot Conversation — multi-model dialogue GPT-4 vs Ollama
+  10. AI Tutor — AI concepts explainer using Ollama
+  11. Student Data Generator — synthetic data with OpenAI + HuggingFace
+  12. BLIP Image Captioning — automatic image captions using Salesforce BLIP
+
 - LLM APIs: Anthropic Claude, OpenAI, Groq, Ollama
-- AI Tools: Cursor, Claude, ChatGPT, GitHub Copilot — builds with AI, not around it
-- Dev tools: Python, LangChain, HuggingFace, ChromaDB, Gradio, Modal
-- Looking for: roles at AI-first startups where AI tools are used daily
-- Location: Remote, willing to travel to California
-- Key strength: Can build and ship AI-powered products quickly using LLM APIs and AI tools
+- AI Tools: Cursor, Claude, ChatGPT, GitHub Copilot
+- Dev tools: Python, LangChain, HuggingFace, ChromaDB, Gradio, Modal, DALL-E, TTS
+- Key strength: Ships AI products fast using LLM APIs and AI-assisted tools
+- Location: Open to remote, hybrid, and onsite — will negotiate after offer
 """
 
 

@@ -8,13 +8,13 @@ load_dotenv()
 
 client = anthropic.Anthropic()
 
-# Free RSS feeds — no API key needed
+# Job feeds — remote, hybrid, and onsite
 RSS_FEEDS = [
     "https://remoteok.com/remote-ai-jobs.rss",
     "https://remoteok.com/remote-llm-jobs.rss",
     "https://remoteok.com/remote-machine-learning-jobs.rss",
-    "https://remoteok.com/remote-nlp-jobs.rss",
     "https://remoteok.com/remote-python-jobs.rss",
+    "https://weworkremotely.com/categories/remote-programming-jobs.rss",
 ]
 
 # Keywords to filter jobs by role
@@ -41,15 +41,29 @@ POSITION_KEYWORDS = {
 # Your background — Claude reads this to find the best matching jobs
 CANDIDATE_PROFILE = """
 - Open to: Paid Internship, Junior AI Engineer, Junior LLM Engineer
-- Location: Remote (can travel to California when needed)
+- Location: Open to remote, hybrid, and onsite — will negotiate after offer
 - Target companies: Early-stage startups (YC, Series A/B)
 - Experience: Completed Ed Donner's 8-week LLM Engineering course
-- Built: RAG pipelines, fine-tuned GPT-4o-mini and DeepSeek 1.3B with LoRA,
-  multi-agent systems, vector stores (ChromaDB), Gradio UIs, Modal deployment
+
+Projects built:
+  1. AI Career Coach Agent — multi-agent system using Claude Sonnet 4.6,
+     RAG pipeline, ChromaDB, 6 specialized agents, Gradio UI, parallel search
+  2. StayEasy RAG — hotel customer support chatbot with RAG, vector embeddings, OpenAI
+  3. Text-to-SQL Fine-tuning — fine-tuned GPT-4o-mini for natural language to SQL
+  4. DeepSeek SQL Fine-tuning — fine-tuned DeepSeek Coder 1.3B with LoRA for SQL
+  5. Groq YouTube Summarizer — YouTube video summarizer using Groq API
+  6. Story Generator — multi-modal story generator with GPT-4o-mini, DALL-E 3, TTS
+  7. Brochure Generator — scrapes websites and generates PDFs using ChatGPT + Gradio
+  8. Ollama Webpage Summarizer — local summarizer using Llama 3.2 via Ollama
+  9. Chatbot Conversation — GPT-4 vs Ollama dialogue with distinct personalities
+  10. AI Tutor — explains AI concepts using Ollama
+  11. Student Data Generator — synthetic data using OpenAI and HuggingFace
+  12. BLIP Image Captioning — automatic image captioning using Salesforce BLIP
+
 - LLM APIs: Anthropic Claude, OpenAI GPT, Groq, Ollama
-- AI Tools: Cursor (AI code editor), Claude, ChatGPT, GitHub Copilot
+- AI Tools: Cursor, Claude, ChatGPT, GitHub Copilot
 - Dev Tools: Python, LangChain, HuggingFace, ChromaDB,
-  SentenceTransformers, Gradio, Modal
+  SentenceTransformers, Gradio, Modal, DALL-E, TTS
 - Interested in: roles that use Claude, Cursor, or any AI-assisted development tools
 """
 
@@ -113,7 +127,8 @@ STRICT RULES:
 - REJECT any job that is primarily GIS, frontend web dev, data engineering,
   finance, or has no AI/LLM component at all
 - REJECT jobs that require 3+ years experience unless it says "junior" or "entry level"
-- PREFER remote-first startups based in California or fully remote
+- Include remote, hybrid, and onsite jobs — do not filter by location type
+- Candidate can negotiate remote/hybrid after getting the offer
 
 Return a JSON array with fields: title, company, description, url, why_good_fit
 why_good_fit = one sentence explaining why this suits the candidate.
